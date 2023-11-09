@@ -1,0 +1,259 @@
+CREATE DATABASE IPL;
+
+USE IPL;
+
+CREATE TABLE TEAM  
+( 
+     TeamID int NOT NULL,
+     TeamName varchar(50) ,
+
+     PRIMARY KEY (TeamID) 
+
+);
+
+CREATE TABLE TEAM_OWNER
+(
+    Team_id int NOT NULL,
+    Owner varchar(50) , 
+
+    PRIMARY KEY (Team_id, Owner),
+    FOREIGN KEY (Team_id) REFERENCES TEAM(TeamID)
+);
+
+CREATE TABLE COACH
+(
+    Type varchar(50) ,
+    Name varchar(50) ,
+    Coach_TeamId int ,
+
+    PRIMARY KEY (Type, Name, Coach_TeamId) ,
+    FOREIGN KEY (Coach_TeamId) REFERENCES TEAM(TeamID)
+);
+
+CREATE TABLE STADIUM
+(
+    Name varchar(50) ,
+    Capacity int NOT NULL,
+    Address_Country varchar(30) NOT NULL,
+    Address_State varchar(30) NOT NULL,
+    Address_City varchar(30) NOT NULL,
+    Address_Street varchar(30) NOT NULL,
+
+    PRIMARY KEY (Name)
+);
+
+CREATE TABLE STADIUM_CONTACTINFO
+(
+    Stadium_Name varchar(50) ,
+    Contact_info char(10) ,
+
+    PRIMARY KEY ( Stadium_Name, Contact_info ) ,
+    FOREIGN KEY (Stadium_Name) REFERENCES STADIUM(Name)
+
+);
+
+CREATE TABLE PLAYERS
+(
+    Name varchar(50) ,
+    Date_date int NOT NULL,
+    Date_month int NOT NULL,
+    Date_year int NOT NULL,
+    JerseyNum int NOT NULL,
+    Age int NOT NULL,
+    AllRounder char DEFAULT 'N',
+    Player_teamid int NOT NULL,
+
+    PRIMARY KEY (Name),
+    FOREIGN KEY (Player_teamid) REFERENCES TEAM(TeamID)
+);
+
+CREATE TABLE PLAYERS_BATSMAN
+(
+    Name varchar(50),
+    type varchar (50) NOT NULL,
+
+    PRIMARY KEY(Name),
+    FOREIGN KEY (Name) REFERENCES PLAYERS(Name)
+);
+
+CREATE TABLE PLAYERS_BOWLER
+(
+    Name varchar(50),
+    type varchar (50) NOT NULL,
+
+    PRIMARY KEY(Name),
+    FOREIGN KEY (Name) REFERENCES PLAYERS(Name)
+);
+
+CREATE TABLE PLAYERS_WICKETKEEPER
+(
+    Name varchar(50),
+
+    PRIMARY KEY(Name),
+    FOREIGN KEY (Name) REFERENCES PLAYERS(Name)
+);
+
+CREATE TABLE GAME
+(
+    Match_ID int,
+    TeamID_1 int NOT NULL,
+    TeamID_2 int NOT NULL,
+    Stadium_Name varchar(20) NOT NULL,
+
+    PRIMARY KEY(Match_ID),
+    FOREIGN KEY (TeamID_1) REFERENCES TEAM(TeamID),
+    FOREIGN KEY (TeamID_2) REFERENCES TEAM(TeamID),
+    FOREIGN KEY (Stadium_Name) REFERENCES STADIUM(Name)
+);
+
+CREATE TABLE MATCHES
+(
+    Match_ID int,
+    Date_date int NOT NULL,
+    Date_month int NOT NULL,
+    Date_year int NOT NULL,
+    Teamwon int NOT NULL,
+
+    PRIMARY KEY(Match_ID),
+    FOREIGN KEY (Match_ID) REFERENCES GAME(Match_ID)
+);
+
+CREATE TABLE PLAYERS_MATCH
+(
+    Match_ID int,
+    Player_Name varchar(50),
+
+    PRIMARY KEY(Match_ID, PLAYER_Name),
+    FOREIGN KEY (Match_ID) REFERENCES GAME(Match_ID),
+    FOREIGN KEY (Player_Name) REFERENCES PLAYERS(Name)
+);
+
+CREATE TABLE UMPIRE
+(
+    Name varchar(20),
+
+    PRIMARY KEY(Name)
+);
+
+CREATE TABLE MATCH_UMPIRE
+(
+    Match_ID int,
+    Name varchar (20),
+
+    PRIMARY KEY(Match_ID, Name),
+    FOREIGN KEY (Name) REFERENCES UMPIRE(Name),
+    FOREIGN KEY (Match_ID) REFERENCES MATCHES(Match_ID)
+);
+
+CREATE TABLE AWARD
+(
+    Award_Name varchar(20),
+    Player_name varchar (20) NOT NULL,
+    Match_ID int,
+
+    PRIMARY KEY(Award_Name, Match_ID),
+    FOREIGN KEY (Match_ID) REFERENCES MATCHES(Match_ID)
+);
+
+INSERT INTO TEAM VALUES 
+( 1, 'Chennai'),
+( 2, 'Hyderabad'), 
+( 3, 'Mumbai'),
+( 4, 'Kolkata') ;
+
+INSERT INTO TEAM_OWNER VALUES
+(1, 'Dravid'),
+(1, 'Sachin'),
+(2, 'Pointing'),
+(2, 'Ricky'),
+(2, 'Dada'),
+(3, 'Shivam'),
+(4, 'Sundaram') ;
+
+INSERT INTO COACH VALUES 
+('Batting', 'Ambani', 1),
+('Bowling', 'Priety', 1),
+('Fielding', 'Sharma', 1),
+('Batting', 'Jashn', 2),
+('Bowling', 'Ritu', 2),
+('Overall', 'Tom', 3),
+('Overall', 'Jerry', 4) ;
+
+INSERT INTO UMPIRE VALUES
+('Ravi'),
+('Rahul'),
+('Raj'),
+('Ram') ;
+
+INSERT INTO STADIUM VALUES
+('Gandhi', 10000, 'India', 'JK', 'Srinagar', 'Mahatma lane'),
+('Nehru', 20000, 'India', 'Odisha', 'Bhuv', 'Prime lane'),
+('Patnaik', 50000, 'India', 'Rajasthan', 'Jaipur', 'Bose lane'),
+('LA', 100000, 'India', 'USA', 'LA', 'James lane') ;
+
+INSERT INTO GAME VALUES
+(1, 1, 2, 'Gandhi'),
+(2, 3, 4, 'Nehru'),
+(3, 2, 4, 'Gandhi'),
+(4, 1, 3, 'LA'),
+(5, 3, 4, 'Patnaik') ;
+
+INSERT INTO MATCHES VALUES 
+(1, 1, 5, 2022, 1),
+(2, 2, 5, 2022, 3),
+(3, 4, 5, 2022, 2),
+(4, 5, 5, 2022, 1),
+(5, 6, 5, 2022, 4);
+
+
+INSERT INTO PLAYERS VALUES
+("Rahul", 12,09,1996,12,25,'Y',2 ),
+("Rohan", 23,05,1994,25,27,'Y',1 ),
+("Roshan", 11,09,1990,16,31,'N',3 ),
+("Rehan", 12,09,1989,06,32,'N',4 ),
+("Rambo", 12,09,1999,01,22,'Y',1 ) ;
+
+INSERT INTO PLAYERS_BATSMAN VALUES
+("Rahul", "R"),
+("Rohan", "L"),
+("Rambo", "R"),
+("Roshan", "L");
+
+INSERT INTO PLAYERS_BOWLER VALUES
+("Rahul", "R"),
+("Rohan", "L"),
+("Rambo", "R"),
+("Rehan", "L");
+
+INSERT INTO PLAYERS_WICKETKEEPER VALUES
+("Rahul"),
+("Rehan");
+
+INSERT INTO STADIUM_CONTACTINFO VALUES 
+('Gandhi', '9999999991'),
+('Gandhi', '9999999992'),
+('LA', '9999999993'),
+('Nehru', '9999999994'),
+('Patnaik', '9999999990') ;
+
+INSERT INTO MATCH_UMPIRE VALUES
+(1, 'Rahul'),
+(1, 'Raj'),
+(2, 'Ram'),
+(2, 'Ravi'),
+(2, 'Raj'),
+(3, 'Rahul'),
+(4, 'Ram') ;
+
+INSERT INTO AWARD VALUES
+('BigSix', 'Rahul' , 1),
+('ManMatch', 'Rambo' , 1),
+('BigSix', 'Roshan' , 2),
+('BigSix', 'Rahul' , 5) ;
+
+INSERT INTO PLAYERS_MATCH VALUES 
+(1, 'Rambo'),
+(1, 'Rohan'),
+(1, 'Rahul'),
+(2, 'Roshan'),
+(2, 'Rehan') ;
